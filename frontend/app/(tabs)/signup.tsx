@@ -3,6 +3,7 @@ import React from 'react';
 import { View } from '@/components/Themed';
 import axios from 'axios';
 import { API_URL } from '../../config'; // Ensure this file is correctly exporting API_URL
+import Toast from 'react-native-toast-message';
 
 export default function RegisterForm() {
   const [name, setName] = React.useState('');
@@ -21,8 +22,16 @@ export default function RegisterForm() {
         password,
       });
 
+        // Show success toast
+        Toast.show({
+          type: 'success',
+          text1: 'Register Successful',
+          text2: 'You can now login',
+        });
       // Handle success
       console.log('Registration Success:', response.data);
+
+    
       // You can redirect the user or show a success message here
     } catch (error) {
       // Handle error
@@ -84,6 +93,7 @@ export default function RegisterForm() {
       <Text style={styles.footerText}>
         Already have an account? <Text style={styles.link}>Login</Text>
       </Text>
+       <Toast />
     </View>
   );
 }

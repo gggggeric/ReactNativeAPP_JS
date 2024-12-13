@@ -1,15 +1,21 @@
+import React from 'react';
 import { StyleSheet } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 
 export default function TabOneScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <>
+      <View style={styles.container}>
+        <Text style={styles.title}>Tab One</Text>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <EditScreenInfo path="app/(tabs)/index.tsx" />
+      </View>
+      {/* Add the Toast provider */}
+      <Toast />
+    </>
   );
 }
 
