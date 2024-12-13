@@ -1,21 +1,45 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import Toast from 'react-native-toast-message';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router'; // For navigation
+import { useSelector } from 'react-redux'; // To access Redux state
+import { RootState } from '../../redux/auth/store'; // Adjust this import based on your Redux store structure
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+export default function Home() {
+  const router = useRouter(); // Initialize the router
 
-export default function TabOneScreen() {
+  // Access the JWT token from Redux store using useSelector
+  const jwtToken = useSelector((state: RootState) => state.auth.jwtToken);
+
+  // Navigate to login page
+  const goToLogin = () => {
+    router.push('/(tabs)/login');
+  };
+
+  // Navigate to signup page
+  const goToSignup = () => {
+    router.push('/(tabs)/signup');
+  };
+
   return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.title}>Tab One</Text>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <EditScreenInfo path="app/(tabs)/index.tsx" />
-      </View>
-      {/* Add the Toast provider */}
-      <Toast />
-    </>
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome to Our App!</Text>
+      <Text style={styles.description}>An awesome app for all your needs. Please login or register to continue.</Text>
+
+      {/* Show the token if it exists */}
+      {jwtToken ? (
+        <Text style={styles.tokenText}>Your JWT Token: {jwtToken}</Text>
+      ) : (
+        <Text style={styles.tokenText}>No JWT token found.</Text>
+      )}
+
+      <TouchableOpacity style={styles.button} onPress={goToLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={goToSignup}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -24,14 +48,38 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   title: {
-    fontSize: 20,
+    fontSize: 32,
     fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
+  description: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 30,
+    color: '#666',
+  },
+  tokenText: {
+    fontSize: 16,
+    marginBottom: 20,
+    color: '#007BFF',
+  },
+  button: {
     width: '80%',
+    height: 50,
+    backgroundColor: '#007BFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

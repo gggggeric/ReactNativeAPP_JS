@@ -1,14 +1,18 @@
-import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
-import axios, { AxiosError } from 'axios';
+import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';  // Import useDispatch
 import Toast from 'react-native-toast-message';
+import { setJwtToken } from '../../redux/auth/actions'; // Import the action
 import { View } from '@/components/Themed';
-import { API_URL } from '../../config'; // Importing from config.js
+import { API_URL } from '../../config';
 
 export default function LoginForm() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+
+  const dispatch = useDispatch();  // Initialize useDispatch to dispatch actions
 
   const handleLogin = async () => {
     setLoading(true);
@@ -20,6 +24,9 @@ export default function LoginForm() {
       });
 
       console.log('Login Success:', response.data);
+
+      // Dispatch the token to Redux store
+      dispatch(setJwtToken(response.data.token)); // Dispatch action to store JWT token
 
       // Show success toast
       Toast.show({
@@ -55,44 +62,37 @@ export default function LoginForm() {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.title}>Login</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Login</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#888"
-          onChangeText={setEmail}
-          value={email}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#888"
+        onChangeText={setEmail}
+        value={email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          onChangeText={setPassword}
-          value={password}
-          secureTextEntry
-          autoCapitalize="none"
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#888"
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry
+        autoCapitalize="none"
+      />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-          <Text style={styles.buttonText}>
-            {loading ? 'Logging in...' : 'Login'}
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'}</Text>
+      </TouchableOpacity>
 
-        <Text style={styles.footerText}>
-          Don't have an account? <Text style={styles.link}>Sign up</Text>
-        </Text>
-      </View>
-
-      {/* Add Toast provider */}
-      <Toast />
-    </>
+      <Text style={styles.footerText}>
+        Don't have an account? <Text style={styles.link}>Sign up</Text>
+      </Text>
+    </View>
   );
 }
 
