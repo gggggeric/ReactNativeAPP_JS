@@ -1,20 +1,47 @@
 import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
+import axios from 'axios';
 import { View } from '@/components/Themed';
-
+import { AxiosError } from 'axios';
+import { API_URL } from '../../config';  // Importing from config.js
 export default function LoginForm() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
-  const handleLogin = () => {
-    // Handle login logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const handleLogin = async () => {
+    setLoading(true);
+    setError('');  // Clear previous error messages
+  
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
+        email,
+        password
+      });
+      console.log('Login Success:', response.data);
+      // Handle success (e.g., store token)
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        // Now TypeScript knows `err` is of type `AxiosError`
+        console.error('Login Error:', err.response?.data || err.message);
+        setError(err.response?.data?.message || 'Failed to login. Please check your credentials.');
+      } else {
+        // Handle unexpected error type
+        console.error('Unexpected Error:', err);
+        setError('An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <TextInput
         style={styles.input}
@@ -36,8 +63,10 @@ export default function LoginForm() {
         autoCapitalize="none"
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        <Text style={styles.buttonText}>
+          {loading ? 'Logging in...' : 'Login'}
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.footerText}>
@@ -93,5 +122,9 @@ const styles = StyleSheet.create({
   link: {
     color: '#007BFF',
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });

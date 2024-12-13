@@ -1,17 +1,37 @@
 import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import { View } from '@/components/Themed';
+import axios from 'axios';
+import { API_URL } from '../../config'; // Ensure this file is correctly exporting API_URL
 
 export default function RegisterForm() {
+  const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
 
-  const handleRegister = () => {
-    // Handle register logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Phone Number:', phoneNumber);
+  // Handle the registration logic
+  const handleRegister = async () => {
+    try {
+      // Send data to the backend via POST request
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
+        name,
+        email,
+        phoneNumber,
+        password,
+      });
+
+      // Handle success
+      console.log('Registration Success:', response.data);
+      // You can redirect the user or show a success message here
+    } catch (error) {
+      // Handle error
+      if (axios.isAxiosError(error)) {
+        console.error('Registration Error:', error.response ? error.response.data : error.message);
+      } else {
+        console.error('Unknown Error:', error);
+      }
+    }
   };
 
   return (
@@ -20,12 +40,11 @@ export default function RegisterForm() {
 
       <TextInput
         style={styles.input}
-        placeholder="Phone Number"
+        placeholder="Name"
         placeholderTextColor="#888"
-        onChangeText={setPhoneNumber}
-        value={phoneNumber}
-        keyboardType="phone-pad"
-        autoCapitalize="none"
+        onChangeText={setName}
+        value={name}
+        autoCapitalize="words"
       />
 
       <TextInput
@@ -35,6 +54,16 @@ export default function RegisterForm() {
         onChangeText={setEmail}
         value={email}
         keyboardType="email-address"
+        autoCapitalize="none"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Phone Number"
+        placeholderTextColor="#888"
+        onChangeText={setPhoneNumber}
+        value={phoneNumber}
+        keyboardType="phone-pad"
         autoCapitalize="none"
       />
 
