@@ -20,7 +20,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   return (
-    <Provider store={store}> 
+
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: '#000',
@@ -34,22 +34,28 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="login"
           options={{
             title: 'Login',
             tabBarIcon: ({ color }) => <AntDesign name="login" size={28} color={color} />,
           }}
-        />
-        <Tabs.Screen
+        /> */}
+        {/* <Tabs.Screen
           name="signup"
           options={{
             title: 'Register',
             tabBarIcon: ({ color }) => <TabBarIcon name="sign-in" color={color} />,
           }}
+        /> */}
+          <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ color }) => <TabBarIcon name="image" color={color} />,
+          }}
         />
       </Tabs>
-      <Toast /> 
-    </Provider>
+
   );
 }

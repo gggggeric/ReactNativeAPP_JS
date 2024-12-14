@@ -1,44 +1,49 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router'; // For navigation
-import { useSelector } from 'react-redux'; // To access Redux state
-import { RootState } from '../../redux/auth/store'; // Adjust this import based on your Redux store structure
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { StyleSheet, Text, Button, View, Pressable } from 'react-native';
+import { logout } from '../../redux/auth/actions'; // Import logout action
+import { useRouter } from 'expo-router';  // Import useRouter for navigation
 
-export default function Home() {
-  const router = useRouter(); // Initialize the router
+export default function HomePage() {
+  const { isLoggedIn, jwtToken } = useSelector((state: any) => state.auth); // Access state using useSelector
+  const dispatch = useDispatch();
+  const router = useRouter();  // Initialize router for navigation
 
-  // Access the JWT token from Redux store using useSelector
-  const jwtToken = useSelector((state: RootState) => state.auth.jwtToken);
-
-  // Navigate to login page
-  const goToLogin = () => {
-    router.push('/(tabs)/login');
+  const handleLogout = () => {
+    dispatch(logout()); // Dispatch logout action
   };
 
-  // Navigate to signup page
-  const goToSignup = () => {
-    router.push('/(tabs)/signup');
+  // Redirect to login page if not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      // Delay the navigation to avoid attempting it before Root Layout is mounted
+      const timer = setTimeout(() => {
+        router.push('../screens/login'); // Redirect to login screen
+      }, 0);
+
+      return () => clearTimeout(timer); // Cleanup the timeout on unmount
+    }
+  }, [isLoggedIn, router]);
+
+  const handleGoToLogin = () => {
+    router.push('../screens/login'); // Navigate to login screen on press
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Our App!</Text>
-      <Text style={styles.description}>An awesome app for all your needs. Please login or register to continue.</Text>
-
-      {/* Show the token if it exists */}
-      {jwtToken ? (
-        <Text style={styles.tokenText}>Your JWT Token: {jwtToken}</Text>
-      ) : (
-        <Text style={styles.tokenText}>No JWT token found.</Text>
+      <Text style={styles.title}>
+        {isLoggedIn ? 'Welcome, you are logged in!' : 'Please log in'}
+      </Text>
+      
+      {isLoggedIn && jwtToken && (
+        <Button title="Logout" onPress={handleLogout} />
       )}
-
-      <TouchableOpacity style={styles.button} onPress={goToLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={goToSignup}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+      
+      {!isLoggedIn && (
+        <Pressable style={styles.loginButton} onPress={handleGoToLogin}>
+          <Text style={styles.loginButtonText}>Go to Login</Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -46,40 +51,21 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
   },
-  description: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 30,
-    color: '#666',
-  },
-  tokenText: {
-    fontSize: 16,
-    marginBottom: 20,
-    color: '#007BFF',
-  },
-  button: {
-    width: '80%',
-    height: 50,
+  loginButton: {
+    marginTop: 20,
+    padding: 10,
     backgroundColor: '#007BFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 20,
+    borderRadius: 5,
   },
-  buttonText: {
-    color: '#fff',
+  loginButtonText: {
+    color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
   },
 });

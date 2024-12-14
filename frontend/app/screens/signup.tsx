@@ -4,12 +4,15 @@ import { View } from '@/components/Themed';
 import axios from 'axios';
 import { API_URL } from '../../config'; // Ensure this file is correctly exporting API_URL
 import Toast from 'react-native-toast-message';
+import { useRouter } from 'expo-router';  // Correct import of useRouter
 
 export default function RegisterForm() {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
+
+  const router = useRouter();  // Initialize useRouter for navigation
 
   // Handle the registration logic
   const handleRegister = async () => {
@@ -22,17 +25,18 @@ export default function RegisterForm() {
         password,
       });
 
-        // Show success toast
-        Toast.show({
-          type: 'success',
-          text1: 'Register Successful',
-          text2: 'You can now login',
-        });
+      // Show success toast
+      Toast.show({
+        type: 'success',
+        text1: 'Register Successful',
+        text2: 'You can now login',
+      });
+
       // Handle success
       console.log('Registration Success:', response.data);
 
-    
-      // You can redirect the user or show a success message here
+      // Optionally, navigate to login after successful registration
+      router.push('./login');  // Use relative path here to go to login screen
     } catch (error) {
       // Handle error
       if (axios.isAxiosError(error)) {
@@ -90,10 +94,16 @@ export default function RegisterForm() {
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
 
-      <Text style={styles.footerText}>
-        Already have an account? <Text style={styles.link}>Login</Text>
-      </Text>
-       <Toast />
+
+      <View style={styles.footerText}>
+        <Text>Already have an account? </Text>
+        <TouchableOpacity onPress={() => router.push('./login')}>
+          <Text style={styles.link}>Login</Text>
+        </TouchableOpacity>
+      </View>
+
+
+      <Toast />
     </View>
   );
 }
