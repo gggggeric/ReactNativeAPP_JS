@@ -4,7 +4,7 @@ import { StyleSheet, Text, Button, View, Pressable } from 'react-native';
 import { logout } from '../../redux/auth/actions'; // Import logout action
 import { useRouter } from 'expo-router';  // Import useRouter for navigation
 
-export default function HomePage() {
+export default function Search() {
   const { isLoggedIn, jwtToken } = useSelector((state: any) => state.auth); // Access state using useSelector
   const dispatch = useDispatch();
   const router = useRouter();  // Initialize router for navigation

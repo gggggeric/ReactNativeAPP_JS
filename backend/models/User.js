@@ -22,9 +22,18 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  specialty: {
+    type: String,
+    default: 'customer', 
+    trim: true
+  },
+  profileImage: {
+    type: String,
+    default: ''
   }
 }, {
-  timestamps: true // Automatically adds createdAt and updatedAt fields
+  timestamps: true 
 });
 
 const User = mongoose.model('User', userSchema);
